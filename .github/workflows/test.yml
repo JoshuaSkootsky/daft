@@ -13,15 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: 1.1.30
-
       - name: Install dependencies
         run: bun install
-
       - name: Type-check
         run: |
           echo "=== Type-checking Examples ==="
@@ -38,18 +35,14 @@ jobs:
     if: always()
     steps:
       - uses: actions/checkout@v4
-
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
         with:
-          bun-version: 1.1.30
-
+          bun-version: 1.1.29
       - name: Install dependencies
         run: bun install
-
       - name: Test linear spec
         run: bun run src/cli/run-local.ts examples/linear-spec.ts examples/data.json
-
       - name: Test DAG spec
         run: bun run src/cli/run-local.ts examples/dag-spec.ts
 
@@ -57,32 +50,30 @@ jobs:
     name: Test LLM specs
     runs-on: ubuntu-latest
     needs: type-check
-    if: env.HAS_ZEN_KEY
+    env:
+      HAS_ZEN_KEY: ${{ secrets.ZEN_API_KEY }}
     steps:
       - uses: actions/checkout@v4
-
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: 1.1.30
-
       - name: Install dependencies
         run: bun install
-
       - name: Test LLM spec
+        if: env.HAS_ZEN_KEY != ''
         run: bun run src/cli/run-local.ts examples/llm-spec.ts
         env:
           ZEN_API_KEY: ${{ secrets.ZEN_API_KEY }}
-
       - name: Test integration spec
+        if: env.HAS_ZEN_KEY != ''
         run: bun run src/cli/run-local.ts examples/integration-spec.ts
         env:
           ZEN_API_KEY: ${{ secrets.ZEN_API_KEY }}
-
       - name: Test enrichment example
         run: bun run src/cli/run-local.ts examples/enrichment-example.ts
-
       - name: Test budget enforcement
+        if: env.HAS_ZEN_KEY != ''
         run: bun run src/cli/run-local.ts examples/budget-spec.ts
         env:
           ZEN_API_KEY: ${{ secrets.ZEN_API_KEY }}

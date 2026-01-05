@@ -11,7 +11,7 @@ A declarative framework for describing iterative AI agent workflows in TypeScrip
 ```bash
 git clone <repo> && cd daft
 echo 'ZEN_API_KEY=xxx' > .env
-./run.sh examples/enrichment.json
+./run.sh examples/dag-spec.ts
 # ✅ Done in 4 iterations – { summary: "...", entities: [...] }
 ```
 
@@ -53,14 +53,12 @@ Built with **Bun** and **Redis**; automate any iterative workflow—data enrichm
 
 ### Examples Overview
 
-DAFT includes several example specs demonstrating different patterns:
+DAFT includes example specs demonstrating different patterns:
 
 - **linear-spec.ts** - Basic linear workflow with echo tool
-- **dag-spec.ts** - Parallel steps with dependencies
-- **llm-spec.ts** - LLM tool usage with hasOutput predicate
+- **dag-spec.ts** - Parallel steps with dependencies (DAG execution)
+- **llm-spec.ts** - LLM tool usage with budget constraints
 - **integration-spec.ts** - Combines LLM and echo tools
-- **enrichment-example.ts** - Demonstrates iterative data enrichment pattern
-- **budget-spec.ts** - Budget enforcement (time/token limits)
 
 
 # Detailed Description

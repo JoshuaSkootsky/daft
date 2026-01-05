@@ -70,10 +70,3 @@ jobs:
         run: bun run src/cli/run-local.ts examples/integration-spec.ts
         env:
           ZEN_API_KEY: ${{ secrets.ZEN_API_KEY }}
-      - name: Test enrichment example
-        run: bun run src/cli/run-local.ts examples/enrichment-example.ts
-      - name: Test budget enforcement
-        if: env.HAS_ZEN_KEY != ''
-        run: bun run src/cli/run-local.ts examples/budget-spec.ts
-        env:
-          ZEN_API_KEY: ${{ secrets.ZEN_API_KEY }}

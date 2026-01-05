@@ -7,7 +7,6 @@ A declarative framework for describing iterative AI agent workflows in TypeScrip
 
 **📚 [Full API Documentation](https://joshuaskootsky.github.io/daft/)**
 
-# DAFT – Declarative Agents, Fast & Type-safe
 
 ```bash
 git clone <repo> && cd daft

@@ -49,32 +49,9 @@ Built with **Bun** and **Redis**; automate any iterative workflow—data enrichm
 3. Built-in budgets – time, tokens, dollars; fail-fast when exceeded.
 
 
-# Ralph versus DAFT
+# DAFT
 
-“Ralph Wiggum” is a technique, not a framework:
-
-put an LLM-agent in a while :; do … done loop, let it burn infinite
-
-cheap calls, and trust “eventual consistency” to yield something useful. Which it can do!
-
-But DAFT is the opposite.
-
-Where Ralph says “run until the heat-death of the universe”, DAFT says:
-
-```
-Ralph Wiggum      |   	DAFT
-while true loop   |   	declarative DAG
-unbounded calls	  |     strict budgets (time, tokens, dollars)
-no structure	    |     typed, compile-time checked specs
-hope it finishes	|     fail-fast when limits hit
-parallel = luck   |	    explicit dependency-driven parallelism
-cost = surprise	  |     cost is capped by design
-mock = hand-edit	| mockLLM data-driven mocks
-```
-
-Ralph is great thermodynamic serendipity.
-
-DAFT is for production pipelines where you need repeatable, budgeted, debuggable agent workflows.
+DAFT gives you a typed, budgeted, DAG-driven pipeline that fails fast when limits are hit and guarantees the same inputs produce the same (or explicitly different) outputs every run.
 
 ## DAFT v1.0.0 Showcase
 
@@ -109,6 +86,7 @@ This spec demonstrates:
 
 DAFT includes example specs demonstrating different patterns:
 
+- **v2-showcase.ts** - DAFT v2 showcase (Multi-pass code review pipeline)
 - **v1-showcase.ts** - DAFT v1.0.0 showcase (NVIDIA earnings analysis pipeline)
 - **linear-spec.ts** - Basic linear workflow with mockLLM tool
 - **dag-spec.ts** - Parallel steps with dependencies (DAG execution)

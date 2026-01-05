@@ -1,0 +1,5 @@
+{
+  "text": "Example input data",
+  "code": "function example() { return 42; }",
+  "score": 75
+}

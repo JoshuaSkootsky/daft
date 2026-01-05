@@ -1,8 +1,11 @@
 # DAFT - Declarative Agents, Fast & Type-safe
 
 [![CI](https://github.com/JoshuaSkootsky/daft/actions/workflows/test.yml/badge.svg)](https://github.com/JoshuaSkootsky/daft/actions/workflows/test.yml)
+[![API Docs](https://img.shields.io/badge/API-Docs-blue)](https://joshuaskootsky.github.io/daft/)
 
 A declarative framework for describing iterative AI agent workflows in TypeScript.
+
+**📚 [Full API Documentation](https://joshuaskootsky.github.io/daft/)**
 
 # DAFT – Declarative Agents, Fast & Type-safe
 
@@ -234,6 +237,12 @@ steps: [
 
 - `llm` - Calls OpenCode Zen LLM (requires `ZEN_API_KEY`)
 - `echo` - Adds analysis field and increments score (for testing)
+
+## Documentation
+
+- **[Full API Documentation](https://joshuaskootsky.github.io/daft/)** - Complete reference for all types, interfaces, and functions
+- [Quick Start Guide](QUICKSTART.md) - Get up and running in 2 minutes
+- [Logging Philosophy](LOGGING.md) - Understanding DAFT's wide event logging approach
 
 ## CLI Commands
 

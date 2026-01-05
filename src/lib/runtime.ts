@@ -72,7 +72,7 @@ export class DAGExecutor {
     const stepPromises = new Map<string, Promise<void>>();
 
     for (const step of topologicalOrder) {
-      const promise = this.executeStep(step, spec, totalUsage, startTime)
+      const promise = this.executeStep(step, spec, totalUsage, startTime, stepPromises)
         .then(result => {
           stepResults.set(step.name, result);
         })
@@ -111,12 +111,13 @@ export class DAGExecutor {
     step: Step,
     spec: Spec,
     totalUsage: Usage,
-    globalStartTime: number
+    globalStartTime: number,
+    stepPromises: Map<string, Promise<void>>
   ): Promise<StepResult> {
     const stepStartTime = Date.now();
     const stepUsage: Usage = { tokens: 0, cost: 0, duration: 0 };
 
-    let currentData = this.getCurrentData(step);
+    let currentData = await this.getCurrentData(step, stepPromises);
     let iteration = 0;
 
     const predicate = this.predicates[step.until];
@@ -152,6 +153,7 @@ export class DAGExecutor {
           }
         }
 
+        this.stepData.set(step.name, currentData);
         iteration++;
 
         this.checkBudget(spec.budget, totalUsage, globalStartTime);
@@ -331,8 +333,14 @@ export class DAGExecutor {
     return update;
   }
 
-  private getCurrentData(step: Step): any {
+  private async getCurrentData(step: Step, stepPromises: Map<string, Promise<void>>): Promise<any> {
     if (step.dependsOn && step.dependsOn.length > 0) {
+      for (const dep of step.dependsOn) {
+        const depPromise = stepPromises.get(dep);
+        if (depPromise) {
+          await depPromise;
+        }
+      }
       let merged: any = {};
       for (const dep of step.dependsOn) {
         const depData = this.stepData.get(dep);

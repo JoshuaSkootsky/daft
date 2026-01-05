@@ -7,112 +7,144 @@ A declarative framework for describing iterative AI agent workflows in TypeScrip
 
 **📚 [Full API Documentation](https://joshuaskootsky.github.io/daft/)**
 
+## Quick Start
 
 ```bash
-git clone <repo> && cd daft
-echo 'ZEN_API_KEY=xxx' > .env
-./run.sh examples/dag-spec.ts
-# ✅ Done in 4 iterations – { summary: "...", entities: [...] }
+git clone https://github.com/JoshuaSkootsky/daft.git && cd daft
+bun install
+echo 'ZEN_API_KEY=your_key_here' > .env
+bun run run-local examples/linear-spec.ts
+# ✅ Done in 4 iterations
 ```
 
 **DAFT** lets you describe *what* your data should look like; agents iterate until it does.
 
+## What Is DAFT?
 
-## 30-second start
+DAFT is a declarative DSL for LLM workflows. You define structure; runtime handles execution.
 
-```bash
-./run.sh examples/linear-spec.ts examples/data.json
+- **Spec = Declarative DAG** (what to do)
+- **Tool = Imperative logic** (how to do it)
+- **Predicate = Stop condition** (when to finish)
+
+```typescript
+{
+  name: 'analyze',
+  until: 'hasSummary',
+  maxIter: 5,
+  tools: ['llm'],
+  dependsOn: ['extract']
+}
 ```
 
-DAFT is Declarative Agent Framework Tooling
+**Why DAFT?**
 
-Control flow is data.
+**Narrow surface** → Fast learning curve. Vocabulary: `steps`, `until`, `tools`, `budget`
 
-The “plan” is a Typescript object, a DAG or even a single declarative object that the runtime interprets.
+**Declarative** → Static analysis. Cycle detection, cost estimation, auto-mocking
 
+**Type-safe** → Build-time validation. TypeScript rejects misspelled predicates
 
-## Stack & scope
+**Upgrade path** → Complex logic in tools; DSL stays honest
 
-Built with **Bun** and **Redis**; automate any iterative workflow—data enrichment, LLM pipelines, scraping, testing, or your own custom tools.
+## DAG Execution
 
-## Learn more
-
-[Full API Docs](https://joshuaskootsky.github.io/daft/) • [Examples](./examples) • [License: MIT](./LICENSE)
-
-
-# Concepts
-
-1. Iterative enrichment – each step adds fields until a predicate passes.
-
-2. DAG parallelism – steps run as soon as their dependencies are satisfied.
-
-3. Built-in budgets – time, tokens, dollars; fail-fast when exceeded.
-
-
-# DAFT
-
-DAFT gives you a typed, budgeted, DAG-driven pipeline that fails fast when limits are hit and guarantees the same inputs produce the same (or explicitly different) outputs every run.
-
-## DAFT v1.0.0 Showcase
-
-**45-second, 25-cent investment-grade analysis pipeline:**
-
-```bash
-./run.sh examples/v1-showcase.ts
+```
+    ┌─────────────┐
+    │ cheap_summary│
+    └──────┬──────┘
+           │
+       ┌───┴────┬──────────┐
+       ▼         ▼          ▼
+   ┌───────┐ ┌───────┐  ┌──────┐
+   │keywords│ │deep_  │  │ risks │
+   └───┬───┘ └────┬──┘  └───┬──┘
+       └──────────┴────────┘
+                  │
+                  ▼
+             ┌────────┐
+             │ report │
+             └────────┘
 ```
 
-This spec demonstrates:
-- **100% TypeScript** - Type-safe from spec to execution
-- **Parallel DAG execution** - Two analysis branches run simultaneously
-- **MockLLM pattern** - Inline mock behavior in spec's `_mock` object
-- **Budget enforcement** - Strict time, token, and cost limits
-- **Iterative enrichment** - Each step adds data until predicates pass
+## Stack & Budget
 
-**What happens:**
-1. `cheap_summary` step generates free summary via mockLLM
-2. `deep_summary` AND `keywords` run in parallel (depends on cheap_summary)
-3. `risk_factors` analyzes once deep/keywords complete
-4. `report` synthesizes final investment recommendation with real LLM
+**Built with Bun + Redis:** Fast runtime, native TypeScript, distributed execution
 
-**Total cost: $0.25** (only final LLM call is paid)
+```typescript
+budget: { maxTime: 45000, maxTokens: 4000, maxCost: 0.25 }
+```
 
-**Proves DAFT vs Ralph:**
-- Explicit, typed, declarative workflow
-- Predictable, budgeted, parallel execution
-- Production-ready data pipeline with 5 steps
+Fail-fast when limits are hit. Zero surprise costs.
 
+## Examples
 
-### Examples Overview
+- **v1-showcase.ts** - Earnings analysis (45s, $0.25)
+- **v2-showcase.ts** - Multi-pass code review
+- **linear-spec.ts** - Basic workflow
+- **dag-spec.ts** - Parallel execution
+- **llm-spec.ts** - Budget constraints
+- **integration-spec.ts** - Multiple tools
 
-DAFT includes example specs demonstrating different patterns:
+## Core Concepts
 
-- **v2-showcase.ts** - DAFT v2 showcase (Multi-pass code review pipeline)
-- **v1-showcase.ts** - DAFT v1.0.0 showcase (NVIDIA earnings analysis pipeline)
-- **linear-spec.ts** - Basic linear workflow with mockLLM tool
-- **dag-spec.ts** - Parallel steps with dependencies (DAG execution)
-- **llm-spec.ts** - LLM tool usage with budget constraints
-- **integration-spec.ts** - Combines LLM and mockLLM tools
+### Spec
 
-
-# Detailed Description
-
-### Specs
-
-A **spec** declares WHAT should happen, not HOW:
-
+Declarative workflow definition:
 ```typescript
 import { predicates } from '../src/tools/predicates';
 import { tools } from '../src/tools';
 
 export default {
-  initial: { text: "Hello" },  // Starting data
-  steps: [                      // Declarative workflow
-    {
-      name: 'analyze',
-      until: 'analyzeDone',     // Predicate name (when to stop)
-      maxIter: 5,              // Max iterations
-      tools: ['llm']            // Tools to run
-    }
-  ]
+  initial: { text: "Hello" },
+  steps: [{
+    name: 'analyze',
+    until: 'analyzeDone',
+    maxIter: 5,
+    tools: ['llm']
+  }]
 };
 ```
+
+### Predicates
+
+Determine when a step should stop iterating: `hasSummary`, `hasKeywords`, `scoreCheck`
+
+### Tools
+
+Tools contain imperative logic. Use built-in (`llm`, `mockLLM`) or create custom:
+
+```typescript
+export const myTool = defineTool({
+  input: {} as { items: string[] },
+  output: {} as { count: number },
+  run: async ({ items }) => ({ count: items.length })
+});
+```
+
+### MockLLM Pattern
+
+Define mock behavior inline for cost-free testing:
+```typescript
+initial: {
+  _mock: {
+    summary: { summary: 'Quick overview...' },
+    keywords: { keywords: ['AI', 'data'] }
+  }
+}
+```
+
+When `ZEN_API_KEY` is set, steps use real LLM. When unset, mockLLM returns `_mock` data.
+
+## Custom Tools (Escape Hatch)
+
+Keep DSL honest—complex logic lives in tools, not spec. Create, register in `src/tools/index.ts`, and use:
+
+```ts
+{ name: 'count', until: 'hasField', tools: ['myTool'] }
+```
+No `if`, `for`, or expressions in spec—declarative structure + imperative tools.
+
+## Learn More
+
+[Full API Docs](https://joshuaskootsky.github.io/daft/) • [Examples](./examples) • [MIT License](./LICENSE)

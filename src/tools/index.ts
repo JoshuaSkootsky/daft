@@ -28,12 +28,12 @@ export function defineTool<I, O>(config: ToolConfig<I, O>): Tool<I, O> {
   return config as any;
 }
 
-/**
+  /**
  * Registry of built-in tools.
  *
  * Includes:
  * - `llm` - Call OpenCode Zen LLM
- * - `echo` - Test tool that returns data with modifications
+ * - `mockLLM` - Test tool that returns mock data from spec's _mock object
  */
 export const tools: Record<string, Tool> = {
   /**
@@ -100,28 +100,34 @@ export const tools: Record<string, Tool> = {
   }),
 
   /**
-   * Echo tool for testing purposes.
+   * Mock LLM tool for testing purposes.
    *
-   * Echoes input back with modifications based on step name.
-   * Useful for testing without making actual LLM API calls.
-   *
-   * Behavior by step name:
-   * - `summarize` - Adds summary field
-   * - `extract_entities` - Adds entities array
-   * - `categorize` - Adds category field
-   * - Other steps - Adds analysis field and increments score
+   * Returns mock behavior defined in spec's initial._mock object.
+   * Useful for testing workflows without making actual LLM API calls.
    *
    * @example
    * ```typescript
-   * const result = await tools.echo.run({ text: 'Hello', stepName: 'summarize' });
-   * // Returns: { text: 'Hello', summary: '...' }
+   * // Define mock behavior in initial data:
+   * initial: {
+   *   _mock: {
+   *     cheap_summary: { cheap_summary: 'Quick overview...' },
+   *     deep_summary: { deep_summary: 'Detailed analysis...' }
+   *   }
+   * }
+   *
+   * // Use in spec:
+   * {
+   *   name: 'cheap_summary',
+   *   until: 'truthy',
+   *   tools: ['mockLLM']
+   * }
    * ```
    */
-  echo: defineTool({
-    name: 'echo',
+  mockLLM: defineTool({
+    name: 'mockLLM',
     input: {} as any,
     output: {} as any,
-    description: 'Echo input back with modifications for testing',
+    description: 'Mock LLM behavior from _mock object (free testing)',
     run: async (input) => {
       const result: any = {};
 
@@ -130,13 +136,60 @@ export const tools: Record<string, Tool> = {
       }
 
       const stepName = (input as any).stepName || 'unknown';
+      const mock = (input as any)._mock;
 
-      if (stepName === 'summarize') {
-        result.summary = 'Document describes a fox jumping over a lazy dog.';
-      } else if (stepName === 'extract_entities') {
-        result.entities = ['fox', 'dog', 'jumping', 'lazy'];
-      } else if (stepName === 'categorize') {
-        result.category = 'Animals';
+      if (mock && typeof mock === 'object' && mock[stepName] && typeof mock[stepName] === 'object') {
+        Object.assign(result, mock[stepName]);
+      }
+
+      return {
+        output: result,
+        usage: { tokens: 0, cost: 0, duration: 0 }
+      };
+     }
+  }),
+
+  /**
+   * Mock LLM tool for testing purposes.
+   *
+   * Returns mock behavior defined in spec's initial._mock object.
+   * Useful for testing workflows without making actual LLM API calls.
+   *
+   * @example
+   * ```typescript
+   * // Define mock behavior in initial data:
+   * initial: {
+   *   _mock: {
+   *     cheap_summary: { cheap_summary: 'Quick overview...' },
+   *     deep_summary: { deep_summary: 'Detailed analysis...' }
+   *   }
+   * }
+   *
+   * // Use in spec:
+   * {
+   *   name: 'cheap_summary',
+   *   until: 'truthy',
+   *   tools: ['mockLLM']
+   * }
+   * ```
+   */
+  mockLLM: defineTool({
+    name: 'mockLLM',
+    input: {} as any,
+    output: {} as any,
+    description: 'Mock LLM behavior from _mock object (free testing)',
+    run: async (input) => {
+      const result = any = {};
+
+      if (input && typeof input === 'object') {
+        Object.assign(result, input);
+      }
+
+      const stepName = (input as any).stepName || 'unknown';
+      const mock = (input as any)._mock;
+
+      if (mock && typeof mock === 'object' && mock[stepName] && typeof mock[stepName] === 'object') {
+        Object.assign(result, mock[stepName]);
       } else {
         result.analysis = 'complete';
         if (!('score' in result) || typeof result.score !== 'number') {

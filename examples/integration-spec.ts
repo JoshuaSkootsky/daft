@@ -3,7 +3,10 @@ import { tools } from '../src/tools';
 
 export default {
   initial: {
-    prompt: "What is 2+2? Answer with just the number."
+    prompt: "What is 2+2? Answer with just the number.",
+    _mock: {
+      verify: { score: 4, verification: 'Calculation verified.' }
+    }
   },
   budget: {
     maxTime: 60000,
@@ -21,7 +24,7 @@ export default {
       name: 'verify',
       until: 'scoreCheck',
       maxIter: 2,
-      tools: ['echo']
+      tools: ['mockLLM']
     }
   ]
 };

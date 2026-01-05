@@ -4,28 +4,40 @@
 
 A declarative framework for describing iterative AI agent workflows in TypeScript.
 
-> **💡 Quick Tip:** Running `bun run cleanup` before starting new workers prevents stale process issues during development.
-
-## Quick Start
-
-**⚠️ Worker Cleanup:** If you're running workers and they become stale, run `bun run cleanup` before starting new ones.
-
-### Installation
+# DAFT – Declarative Agents, Fast & Type-safe
 
 ```bash
-# Clone and install
-git clone <repo>
-cd daft
-bun install
+git clone <repo> && cd daft
+echo 'ZEN_API_KEY=xxx' > .env
+./run.sh examples/enrichment.json
+# ✅ Done in 4 iterations – { summary: "...", entities: [...] }
 ```
 
-### Configuration
+**DAFT** lets you describe *what* your data should look like; agents iterate until it does.
 
-Set your OpenCode Zen API key:
+DAFT is Declarative Agent Framework Tooling
 
-```bash
-export ZEN_API_KEY=your_api_key_here
+Control flow is data.
+
+The “plan” is a DAG (or even a single declarative object) that the runtime interprets.
+
+Users never write for (pass = 1; pass ≤ max; pass++); they write:
+
 ```
+	steps: [{ until: schema.parse, maxIter: 5, tools: ["llm", "google-search"] }]
+```
+
+The engine decides parallelism, retry, back-off, etc.
+
+
+Concepts in 3 Bullets
+
+1. Iterative enrichment – each step adds fields until a predicate passes.
+
+2. DAG parallelism – steps run as soon as their dependencies are satisfied.
+
+3. Built-in budgets – time, tokens, dollars; fail-fast when exceeded.
+
 
 ### Run Your First Spec
 

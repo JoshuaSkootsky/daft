@@ -1,0 +1,33 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "src/lib/types.ts",
+    "src/lib/runtime.ts",
+    "src/tools/index.ts",
+    "src/tools/predicates.ts"
+  ],
+  "excludePrivate": true,
+  "theme": "default",
+  "sort": [
+    "source-order"
+  ],
+  "kindSortOrder": [
+    "Module",
+    "Namespace",
+    "Enum",
+    "EnumMember",
+    "Class",
+    "Interface",
+    "TypeAlias",
+    "Constructor",
+    "Property",
+    "Method",
+    "Function",
+    "Variable"
+  ],
+  "includeVersion": true,
+  "hideGenerator": true,
+  "readme": "README.md",
+  "name": "DAFT"
+}
+

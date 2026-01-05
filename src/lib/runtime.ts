@@ -1,11 +1,37 @@
 import type { Spec, Step, Budget, Result, StepResult, Usage, Predicate, Tool } from './types';
 import { createWideEventLogger, type WideEventLogger, type StepEvent } from './logging';
 
+/**
+ * Executes DAFT specs with DAG-based parallelism and budget enforcement.
+ *
+ * The executor handles:
+ * - Topological sorting of steps with dependencies
+ * - Parallel execution of independent steps
+ * - Iterative execution with predicates
+ * - Concurrency control
+ * - Budget enforcement (time, tokens, cost)
+ * - Automatic error handling and logging
+ *
+ * @example
+ * ```typescript
+ * const executor = new DAGExecutor(predicates, tools, 4, logger);
+ * const result = await executor.execute(spec);
+ * console.log(result.message);
+ * ```
+ */
 export class DAGExecutor {
   private concurrencySlots: number;
   private running: number = 0;
   private stepData: Map<string, any> = new Map();
 
+  /**
+   * Create a new DAGExecutor instance.
+   *
+   * @param predicates - Map of predicate names to predicate functions
+   * @param tools - Map of tool names to tool implementations
+   * @param concurrency - Maximum number of steps to run in parallel (default: 4)
+   * @param logger - Optional logger for structured event logging
+   */
   constructor(
     private predicates: Record<string, Predicate>,
     private tools: Record<string, Tool>,
@@ -15,6 +41,25 @@ export class DAGExecutor {
     this.concurrencySlots = concurrency;
   }
 
+  /**
+   * Execute a DAFT spec.
+   *
+   * Steps are executed in topological order, respecting dependencies.
+   * Steps without common dependencies run in parallel up to the concurrency limit.
+   * Each step runs iteratively until its predicate is satisfied or maxIter is reached.
+   *
+   * @param spec - The spec to execute
+   * @returns Result object with success status, final data, and per-step results
+   *
+   * @example
+   * ```typescript
+   * const result = await executor.execute(spec);
+   * if (result.success) {
+   *   console.log('Final data:', result.data);
+   *   console.log('Usage:', result.usage);
+   * }
+   * ```
+   */
   async execute(spec: Spec): Promise<Result> {
     const startTime = Date.now();
     const totalUsage: Usage = { tokens: 0, cost: 0, duration: 0 };

@@ -8,11 +8,16 @@
     "worker": "bun src/cli/worker.ts",
     "logs": "bun src/cli/logs.ts",
     "run-local": "bun src/cli/run-local.ts",
-    "cleanup": "bun src/cli/cleanup-workers.ts"
+    "cleanup": "bun src/cli/cleanup-workers.ts",
+    "docs:build": "typedoc src/lib/types.ts src/lib/runtime.ts src/tools/index.ts src/tools/predicates.ts --out docs/api --name DAFT --readme README.md --hideGenerator --skipErrorChecking",
+    "docs:serve": "bun run docs:build && npx serve docs/api"
   },
   "dependencies": {
     "bun-types": "latest",
     "ioredis": "^5.9.0",
     "redis": "^5.10.0"
+  },
+  "devDependencies": {
+    "typedoc": "^0.28.15"
   }
 }

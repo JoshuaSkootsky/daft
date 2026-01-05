@@ -1,6 +1,6 @@
 # DAFT - Declarative Agents, Fast & Type-safe
 
-[![CI](https://github.com/skootsky/daft/actions/workflows/test.yml/badge.svg)](https://github.com/skootsky/daft/actions/workflows/test.yml)
+[![CI](https://github.com/JoshuaSkootsky/daft/actions/workflows/test.yml/badge.svg)](https://github.com/JoshuaSkootsky/daft/actions/workflows/test.yml)
 
 A declarative framework for describing iterative AI agent workflows in TypeScript.
 

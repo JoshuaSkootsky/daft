@@ -57,7 +57,7 @@ jobs:
     name: Test LLM specs
     runs-on: ubuntu-latest
     needs: type-check
-    if: ${{ secrets.ZEN_API_KEY != '' }}
+    if: ${{ secrets['ZEN_API_KEY'] != '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -72,12 +72,12 @@ jobs:
       - name: Test LLM spec
         run: bun run src/cli/run-local.ts examples/llm-spec.ts
         env:
-          ZEN_API_KEY: ${{ secrets.ZEN_API_KEY }}
+          ZEN_API_KEY: ${{ secrets['ZEN_API_KEY'] }}
 
       - name: Test integration spec
         run: bun run src/cli/run-local.ts examples/integration-spec.ts
         env:
-          ZEN_API_KEY: ${{ secrets.ZEN_API_KEY }}
+          ZEN_API_KEY: ${{ secrets['ZEN_API_KEY'] }}
 
       - name: Test enrichment example
         run: bun run src/cli/run-local.ts examples/enrichment-example.ts
@@ -85,4 +85,4 @@ jobs:
       - name: Test budget enforcement
         run: bun run src/cli/run-local.ts examples/budget-spec.ts
         env:
-          ZEN_API_KEY: ${{ secrets.ZEN_API_KEY }}
+          ZEN_API_KEY: ${{ secrets['ZEN_API_KEY'] }}

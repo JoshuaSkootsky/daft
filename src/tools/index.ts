@@ -52,7 +52,7 @@ export const tools: Record<string, Tool> = {
    */
   llm: defineTool({
     name: 'llm',
-    input: {} as { prompt: string; model?: string },
+    input: {} as { prompt?: string; transcript?: string; text?: string; model?: string },
     output: {} as { output: string; tokens: number },
     description: 'Call OpenCode Zen LLM',
     run: async (input) => {
@@ -187,16 +187,6 @@ export const tools: Record<string, Tool> = {
                 duration: Date.now() - startTime
               }
             };
-          }
-
-          return {
-            output: extracted,
-            usage: {
-              tokens,
-              cost: calculateCost(tokens, m),
-              duration: Date.now() - startTime
-            }
-          };
           }
 
           return {

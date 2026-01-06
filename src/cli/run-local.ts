@@ -41,7 +41,9 @@ async function main() {
         process.exit(1);
       }
       try {
-        data = JSON.parse(await file.text());
+        const loadedData = JSON.parse(await file.text());
+        const initial = spec.initial as Record<string, any>;
+        data = { ...initial, ...loadedData, _mock: initial._mock };
         console.log(`Loaded data from: ${dataPath}`);
       } catch (error) {
         console.error(`JSON error: ${error instanceof Error ? error.message : String(error)}`);

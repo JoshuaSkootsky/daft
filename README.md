@@ -47,26 +47,6 @@ DAFT is a declarative DSL for LLM workflows. You define structure; runtime handl
 
 **Upgrade path** → Complex logic in tools; DSL stays honest
 
-## DAG Execution
-
-```
-    ┌─────────────┐
-    │ cheap_summary│
-    └──────┬──────┘
-           │
-       ┌───┴────┬──────────┐
-       ▼         ▼          ▼
-   ┌───────┐ ┌───────┐  ┌──────┐
-   │keywords│ │deep_  │  │ risks │
-   └───┬───┘ └────┬──┘  └───┬──┘
-       └──────────┴────────┘
-                  │
-                  ▼
-             ┌────────┐
-             │ report │
-             └────────┘
-```
-
 ## Stack & Budget
 
 **Built with Bun + Redis:** Fast runtime, native TypeScript, distributed execution

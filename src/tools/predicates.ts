@@ -243,5 +243,61 @@ export const predicates: Record<string, Predicate> = {
       ok: hasTone,
       msg: hasTone ? undefined : 'Tone not determined yet'
     };
+  },
+
+  hasDeepSummary: (data: any) => {
+    const hasDeepSummary = data && typeof data === 'object' && 'deep_summary' in data && !!data.deep_summary;
+    return {
+      ok: hasDeepSummary,
+      msg: hasDeepSummary ? undefined : 'Deep summary not created yet'
+    };
+  },
+
+  hasRisks: (data: any) => {
+    const hasRisks = data && typeof data === 'object' && 'risks' in data && Array.isArray(data.risks) && data.risks.length > 0;
+    return {
+      ok: hasRisks,
+      msg: hasRisks ? undefined : 'Risks not extracted yet'
+    };
+  },
+
+  hasReport: (data: any) => {
+    const hasReport = data && typeof data === 'object' && 'report' in data && !!data.report;
+    return {
+      ok: hasReport,
+      msg: hasReport ? undefined : 'Report not generated yet'
+    };
+  },
+
+  hasStyleIssues: (data: any) => {
+    const hasStyleIssues = data && typeof data === 'object' && 'style_issues' in data && Array.isArray(data.style_issues) && data.style_issues.length > 0;
+    return {
+      ok: hasStyleIssues,
+      msg: hasStyleIssues ? undefined : 'Style issues not found yet'
+    };
+  },
+
+  hasSecurityIssues: (data: any) => {
+    const hasSecurityIssues = data && typeof data === 'object' && 'security_issues' in data && Array.isArray(data.security_issues) && data.security_issues.length > 0;
+    return {
+      ok: hasSecurityIssues,
+      msg: hasSecurityIssues ? undefined : 'Security issues not found yet'
+    };
+  },
+
+  hasPerformanceIssues: (data: any) => {
+    const hasPerformanceIssues = data && typeof data === 'object' && 'performance_issues' in data && Array.isArray(data.performance_issues) && data.performance_issues.length > 0;
+    return {
+      ok: hasPerformanceIssues,
+      msg: hasPerformanceIssues ? undefined : 'Performance issues not found yet'
+    };
+  },
+
+  hasRecommendations: (data: any) => {
+    const hasRecommendations = data && typeof data === 'object' && 'recommendations' in data && Array.isArray(data.recommendations) && data.recommendations.length > 0;
+    return {
+      ok: hasRecommendations,
+      msg: hasRecommendations ? undefined : 'Recommendations not generated yet'
+    };
   }
 };

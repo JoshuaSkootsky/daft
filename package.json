@@ -13,11 +13,10 @@
     "docs:serve": "bun run docs:build && npx serve docs/api"
   },
   "dependencies": {
-    "bun-types": "latest",
-    "ioredis": "^5.9.0",
     "redis": "^5.10.0"
   },
   "devDependencies": {
+    "bun-types": "latest",
     "typedoc": "^0.28.15"
   }
 }

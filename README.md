@@ -127,4 +127,4 @@ No `if`, `for`, or expressions in spec—declarative structure + imperative tool
 
 ## Learn More
 
-[Full API Docs](https://joshuaskootsky.github.io/daft/) • [Examples](./examples) • [MIT License](./LICENSE)
+[Full API Docs](https://joshuaskootsky.github.io/daft/) • [Examples](https://github.com/JoshuaSkootsky/daft/tree/main/examples) • [MIT License](https://github.com/JoshuaSkootsky/daft/blob/main/LICENSE)

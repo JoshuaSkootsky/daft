@@ -299,5 +299,51 @@ export const predicates: Record<string, Predicate> = {
       ok: hasRecommendations,
       msg: hasRecommendations ? undefined : 'Recommendations not generated yet'
     };
+  },
+
+  hasQualityScore: (data: any) => {
+    const hasQuality = data && typeof data === 'object' && 'overall_quality' in data && typeof data.overall_quality === 'number';
+    return {
+      ok: hasQuality,
+      msg: hasQuality ? undefined : 'Quality score not calculated yet'
+    };
+  },
+
+  hasContent: (data: any) => {
+    const hasContent = data && typeof data === 'object' && 'content' in data && !!data.content;
+    return {
+      ok: hasContent,
+      msg: hasContent ? undefined : 'Content not generated yet'
+    };
+  },
+
+  hasFactCheck: (data: any) => {
+    const hasFactCheck = data && typeof data === 'object' && 'fact_errors' in data && typeof data.fact_errors === 'number';
+    return {
+      ok: hasFactCheck,
+      msg: hasFactCheck ? undefined : 'Fact check not completed yet'
+    };
+  },
+
+  hasFormattedContent: (data: any) => {
+    const hasFormatted = data && typeof data === 'object' && 'formatted_content' in data && !!data.formatted_content;
+    return {
+      ok: hasFormatted,
+      msg: hasFormatted ? undefined : 'Content not formatted yet'
+    };
+  },
+
+  meetsQualityThreshold: (data: any) => {
+    const quality = data && typeof data === 'object' ? data.overall_quality : undefined;
+    if (typeof quality !== 'number') {
+      return { ok: false, msg: 'Quality score must be a number' };
+    }
+    if (quality >= 85) {
+      return { ok: true };
+    }
+    return {
+      ok: false,
+      msg: `Quality ${quality} < 85`
+    };
   }
 };
